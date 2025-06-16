@@ -1,0 +1,140 @@
+<?php
+include 'koneksi.php';
+
+if (!isset($_GET['id'])) {
+    echo "ID tidak ditemukan!";
+    exit;
+}
+
+$id = intval($_GET['id']);
+$query = "SELECT * FROM karyawan WHERE id = $id";
+$result = mysqli_query($koneksi, $query);
+
+if (!$result || mysqli_num_rows($result) === 0) {
+    echo "Data tidak ditemukan!";
+    exit;
+}
+
+$data = mysqli_fetch_assoc($result);
+?>
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <title>Edit Karyawan - Sistem Kantor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 40px;
+        }
+        .form-container {
+            background-color: white;
+            max-width: 500px;
+            margin: auto;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+        textarea {
+            resize: vertical;
+        }
+        .gender-group {
+            margin-top: 6px;
+        }
+        .gender-group label {
+            font-weight: normal;
+            margin-right: 20px;
+        }
+        .btn-submit {
+            margin-top: 25px;
+            width: 100%;
+            padding: 12px;
+            background-color: #2980b9;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .btn-submit:hover {
+            background-color: #1f6391;
+        }
+        .btn-back {
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            color: #2980b9;
+            font-weight: 600;
+        }
+        .btn-back:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Edit Karyawan</h2>
+        <form action="proses_edit.php" method="POST">
+            <input type="hidden" name="id" value="<?= $data['id']; ?>">
+
+            <label for="nama">Nama Lengkap</label>
+            <input type="text" name="nama" id="nama" value="<?= htmlspecialchars($data['nama']); ?>" required>
+
+            <label for="divisi">Divisi</label>
+            <select name="divisi" id="divisi" required>
+                <option value="">-- Pilih Divisi --</option>
+                <option value="HRD" <?= $data['divisi'] == 'HRD' ? 'selected' : '' ?>>HRD</option>
+                <option value="Keuangan" <?= $data['divisi'] == 'Keuangan' ? 'selected' : '' ?>>Keuangan</option>
+                <option value="IT" <?= $data['divisi'] == 'IT' ? 'selected' : '' ?>>IT</option>
+                <option value="Marketing" <?= $data['divisi'] == 'Marketing' ? 'selected' : '' ?>>Marketing</option>
+                <option value="Produksi" <?= $data['divisi'] == 'Produksi' ? 'selected' : '' ?>>Produksi</option>
+            </select>
+
+            <label for="alamat">Alamat</label>
+            <textarea name="alamat" id="alamat" rows="3" required><?= htmlspecialchars($data['alamat']); ?></textarea>
+
+            <label for="umur">Umur</label>
+            <input type="number" name="umur" id="umur" min="18" max="70" value="<?= htmlspecialchars($data['umur']); ?>" required>
+
+            <label>Jenis Kelamin</label>
+            <div class="gender-group">
+                <label><input type="radio" name="jenis_kelamin" value="Laki-laki" <?= $data['jenis_kelamin'] == 'Laki-laki' ? 'checked' : '' ?>> Laki-laki</label>
+                <label><input type="radio" name="jenis_kelamin" value="Perempuan" <?= $data['jenis_kelamin'] == 'Perempuan' ? 'checked' : '' ?>> Perempuan</label>
+            </div>
+
+            <label for="status">Status</label>
+            <select name="status" id="status" required>
+                <option value="">-- Pilih Status --</option>
+                <option value="aktif" <?= $data['status'] == 'aktif' ? 'selected' : '' ?>>Aktif</option>
+                <option value="tidak aktif" <?= $data['status'] == 'tidak aktif' ? 'selected' : '' ?>>Tidak Aktif</option>
+    </select>
+
+            <button type="submit" class="btn-submit">Simpan Perubahan</button>
+        </form>
+        <a href="daftar-karyawan.php" class="btn-back">← Kembali ke Daftar Karyawan</a>
+    </div>
+</body>
+</html>
